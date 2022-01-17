@@ -83,7 +83,7 @@ public class JPlagOptions {
     /**
      * Language to use when parsing the submissions.
      */
-    private LanguageOption languageOption;
+    private final String languageName;
 
     /**
      * Level of output verbosity.
@@ -93,9 +93,9 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
+    public JPlagOptions(String rootDirectoryName, String languageName) {
         this.rootDirectoryName = rootDirectoryName;
-        this.languageOption = languageOption;
+        this.languageName = languageName;
     }
 
     /**
@@ -113,8 +113,8 @@ public class JPlagOptions {
         }
     }
 
-    public LanguageOption getLanguageOption() {
-        return languageOption;
+    public String getLanguageName() {
+        return languageName;
     }
 
     public Verbosity getVerbosity() {
@@ -213,10 +213,6 @@ public class JPlagOptions {
     public void setSubdirectoryName(String subdirectoryName) {
         // Trim problematic file separators.
         this.subdirectoryName = (subdirectoryName == null) ? null : subdirectoryName.replace(File.separator, "");
-    }
-
-    public void setLanguageOption(LanguageOption languageOption) {
-        this.languageOption = languageOption;
     }
 
     public void setVerbosity(Verbosity verbosity) {

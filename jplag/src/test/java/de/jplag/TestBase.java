@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
@@ -28,7 +27,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA);
+        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), Languages.DEFAULT_LANGUAGE);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

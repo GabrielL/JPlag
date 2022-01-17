@@ -33,7 +33,7 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        language = loadLanguage(errorCollector, options.getLanguageOption().getClassPath());
+        language = loadLanguage(errorCollector, options.getLanguageName());
         this.options.setLanguageDefaults(language);
 
         System.out.println("Initialized language " + language.getName());
@@ -77,15 +77,6 @@ public class JPlag {
     }
 
     private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
-        try {
-            Constructor<?> constructor = Class.forName(classPath).getConstructor(ErrorConsumer.class);
-            Object[] constructorParams = {errorCollector};
-
-            return (Language) constructor.newInstance(constructorParams);
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
-        }
+        return Languages.provider(classPath).create(errorCollector);
     }
 }

@@ -2,12 +2,12 @@ package de.jplag.cli;
 
 import static org.junit.Assert.assertEquals;
 
+import de.jplag.Languages;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import de.jplag.CommandLineArgument;
-import de.jplag.options.LanguageOption;
 
 public class LanguageOptionTest extends CommandLineInterfaceTest {
 
@@ -17,7 +17,7 @@ public class LanguageOptionTest extends CommandLineInterfaceTest {
     @Test
     public void testDefaultLanguage() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(LanguageOption.getDefault(), options.getLanguageOption());
+        assertEquals(Languages.DEFAULT_LANGUAGE, options.getLanguageName());
     }
 
     @Test
@@ -29,10 +29,10 @@ public class LanguageOptionTest extends CommandLineInterfaceTest {
 
     @Test
     public void testValidLanguages() {
-        for (LanguageOption language : LanguageOption.values()) {
-            String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getDisplayName());
+        for (var language : Languages.getAllDisplayNames()) {
+            String argument = buildArgument(CommandLineArgument.LANGUAGE, language);
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-            assertEquals(language, options.getLanguageOption());
+            assertEquals(language, options.getLanguageName());
         }
     }
 
