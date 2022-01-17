@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
@@ -18,8 +19,8 @@ public class JPlag {
     private final Language language;
 
     // CORE COMPONENTS:
-    private ComparisonStrategy comparisonStrategy;
-    private GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
+    private final ComparisonStrategy comparisonStrategy;
+    private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
     private final JPlagOptions options;
     private final ErrorCollector errorCollector;
 
@@ -32,11 +33,11 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        language = loadLanguage(errorCollector, this.options.getLanguageOption().getClassPath());
+        language = loadLanguage(errorCollector, options.getLanguageOption().getClassPath());
         this.options.setLanguageDefaults(language);
 
         System.out.println("Initialized language " + language.getName());
-        initializeComparisonStrategy();
+        comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
     }
 
     public Language getLanguage() {
@@ -68,17 +69,11 @@ public class JPlag {
         return result;
     }
 
-    private void initializeComparisonStrategy() {
-        switch (options.getComparisonMode()) {
-        case NORMAL:
-            comparisonStrategy = new NormalComparisonStrategy(options, coreAlgorithm);
-            break;
-        case PARALLEL:
-            comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
-            break;
-        default:
-            throw new UnsupportedOperationException("Comparison mode not properly supported: " + options.getComparisonMode());
-        }
+    private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode) {
+        return switch (comparisonMode) {
+            case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
+            case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
+        };
     }
 
     private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
