@@ -33,7 +33,7 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        initializeLanguage();
+        initializeLanguage(this.options.getLanguageOption(), errorCollector);
         initializeComparisonStrategy();
     }
 
@@ -75,25 +75,24 @@ public class JPlag {
         }
     }
 
-    private void initializeLanguage() {
-        LanguageOption languageOption = this.options.getLanguageOption();
+    private void initializeLanguage(final LanguageOption languageOption, final ErrorCollector errorCollector) {
+        language = loadLanguage(errorCollector, languageOption.getClassPath());
+        options.setLanguage(language);
+        options.setLanguageDefaults(language);
 
+        System.out.println("Initialized language " + language.getName());
+    }
+
+    private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorConsumer.class);
+            Constructor<?> constructor = Class.forName(classPath).getConstructor(ErrorConsumer.class);
             Object[] constructorParams = {errorCollector};
 
-            Language language = (Language) constructor.newInstance(constructorParams);
-
-            this.language = language;
-            this.options.setLanguage(language);
+            return (Language) constructor.newInstance(constructorParams);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage());
+            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
         }
-
-        this.options.setLanguageDefaults(this.language);
-
-        System.out.println("Initialized language " + this.language.getName());
     }
 }
