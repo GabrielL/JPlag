@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
@@ -16,7 +15,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  */
 public class JPlag {
     // INPUT:
-    private Language language;
+    private final Language language;
 
     // CORE COMPONENTS:
     private ComparisonStrategy comparisonStrategy;
@@ -33,7 +32,10 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        initializeLanguage(this.options.getLanguageOption(), errorCollector);
+        language = loadLanguage(errorCollector, this.options.getLanguageOption().getClassPath());
+        this.options.setLanguageDefaults(language);
+
+        System.out.println("Initialized language " + language.getName());
         initializeComparisonStrategy();
     }
 
@@ -77,14 +79,6 @@ public class JPlag {
         default:
             throw new UnsupportedOperationException("Comparison mode not properly supported: " + options.getComparisonMode());
         }
-    }
-
-    private void initializeLanguage(final LanguageOption languageOption, final ErrorCollector errorCollector) {
-        language = loadLanguage(errorCollector, languageOption.getClassPath());
-        options.setLanguage(language);
-        options.setLanguageDefaults(language);
-
-        System.out.println("Initialized language " + language.getName());
     }
 
     private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {

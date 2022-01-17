@@ -18,11 +18,6 @@ public class JPlagOptions {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
-     * Language used to parse the submissions.
-     */
-    private Language language;
-
-    /**
      * Determines which strategy to use for the comparison of submissions.
      */
     private ComparisonMode comparisonMode = DEFAULT_COMPARISON_MODE;
@@ -146,10 +141,6 @@ public class JPlagOptions {
         return fileSuffixes;
     }
 
-    public Language getLanguage() {
-        return language;
-    }
-
     public Integer getMinimumTokenMatch() {
         return minimumTokenMatch;
     }
@@ -184,10 +175,6 @@ public class JPlagOptions {
 
     public SimilarityMetric getSimilarityMetric() {
         return similarityMetric;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
     }
 
     public void setComparisonMode(ComparisonMode comparisonMode) {
