@@ -1,12 +1,9 @@
 package de.jplag;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -68,27 +65,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * submission.
      */
     public final String[] files(int j) {
-        if (matches.size() == 0) {
-            return new String[] {};
-        }
+        boolean isFirst = j == 0;
+        TokenList tokenList = (isFirst ? firstSubmission : secondSubmission).getTokenList();
 
-        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).getTokenList();
-
-        /*
-         * Collect the file names of the first token of each match.
-         */
-        Set<String> collectedFiles = new LinkedHashSet<>();
-        for (Match match: matches) {
-            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).file);
-        }
-
-        /*
-         * sort by file name. (so that equally named files are displayed approximately side by side.)
-         */
-        String[] res = collectedFiles.toArray(new String[0]);
-        Arrays.sort(res);
-
-        return res;
+        return matches.stream()
+                .map(m -> tokenList.getToken(m.getStart(isFirst)).file)
+                .distinct()
+                .sorted()
+                .toArray(String[]::new);
     }
 
     /**
