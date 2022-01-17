@@ -37,6 +37,10 @@ public class JPlag {
         initializeComparisonStrategy();
     }
 
+    public Language getLanguage() {
+        return language;
+    }
+
     /**
      * Main procedure, executes the comparison of source code submissions.
      * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
