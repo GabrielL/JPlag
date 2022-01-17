@@ -25,11 +25,6 @@ public class JPlagResult {
     private int numberOfSubmissions;
 
     /**
-     * Options for the plagiarism detection run.
-     */
-    private JPlagOptions options;
-
-    /**
      * 10-element array representing the similarity distribution of the detected matches.
      * <p>
      * Each entry represents the absolute frequency of matches whose similarity lies within the respective interval.
@@ -47,11 +42,10 @@ public class JPlagResult {
         // No results available.
     }
 
-    public JPlagResult(List<JPlagComparison> comparisons, long durationInMillis, int numberOfSubmissions, JPlagOptions options) {
+    public JPlagResult(List<JPlagComparison> comparisons, long durationInMillis, int numberOfSubmissions) {
         this.comparisons = comparisons;
         this.durationInMillis = durationInMillis;
         this.numberOfSubmissions = numberOfSubmissions;
-        this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
         comparisons.sort((first, second) -> Float.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
     }
@@ -95,18 +89,14 @@ public class JPlagResult {
         return numberOfSubmissions;
     }
 
-    public JPlagOptions getOptions() {
-        return options;
-    }
-
     public int[] getSimilarityDistribution() {
         return similarityDistribution;
     }
 
     @Override
     public String toString() {
-        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getComparisons().size(),
-                getDuration(), getOptions().getLanguageOption(), getNumberOfSubmissions());
+        return String.format("JPlagResult { comparisons: %d, duration: %d ms, submissions: %d }", getComparisons().size(),
+                getDuration(), getNumberOfSubmissions());
     }
 
     /**
