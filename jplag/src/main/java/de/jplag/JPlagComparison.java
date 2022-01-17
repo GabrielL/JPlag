@@ -44,7 +44,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * The bigger a match (length) is relatively to the biggest match the redder is the color returned by this method.
      */
     public String color(int length) {
-        int longestMatch = matches.stream().mapToInt(it -> it.getLength()).max().orElse(0);
+        int longestMatch = matches.stream().mapToInt(Match::getLength).max().orElse(0);
         int color = 255 * length / longestMatch;
         String help = (color < 16 ? "0" : "") + Integer.toHexString(color);
         return "#" + help + "0000";
