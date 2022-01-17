@@ -1,9 +1,9 @@
 package de.jplag;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -210,13 +210,12 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return the permutation indices.
      */
     public final List<Integer> sort_permutation(boolean useFirst) {
-        List<Integer> indices = new ArrayList<>(matches.size());
-        IntStream.range(0, matches.size()).forEach(index -> indices.add(index));
-        Comparator<Integer> comparator = (Integer i, Integer j) -> {
-            return Integer.compare(selectStartof(i, useFirst), selectStartof(j, useFirst));
-        };
-        Collections.sort(indices, comparator);
-        return indices;
+        Comparator<Integer> comparator = Comparator.comparingInt((Integer i) -> selectStartof(i, useFirst));
+
+        return IntStream.range(0, matches.size())
+                .boxed()
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 
     private int selectStartof(Integer index, boolean useFirst) {
